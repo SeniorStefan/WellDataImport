@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="WellDataImport.Tests/WellDataImport.Tests.csproj" Id="f85444b1-c23f-4aa5-803b-bfaad9f73d14" />
   <Project Path="WellDataImport/WellDataImport.csproj" Id="3219bd5c-7259-44f5-a580-b31b4d5f85cf" />
 </Solution>
