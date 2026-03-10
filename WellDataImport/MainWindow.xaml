@@ -5,9 +5,121 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WellDataImport"
         mc:Ignorable="d"
-        Title="WellDataImport" Height="450" Width="800"
+        Title="Well Data Import" Height="600" Width="1000"
+        MinHeight="400" MinWidth="800"
         Background="#333333">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Background" Value="#FF3A7BD5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель -->
+        <Border Grid.Row="0" Padding="10">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button Content="Загрузить CSV" Command="{Binding LoadCommand}" />
+                    <Button Content="Экспорт JSON" Command="{Binding ExportJsonCommand}" />
+                </StackPanel>
+                <TextBlock DockPanel.Dock="Right"
+                           VerticalAlignment="Center"
+                           Text="{Binding CurrentFilePath}"
+                           TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+
+        <!-- Основное содержимое -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Сводка по скважинам -->
+            <GroupBox Header="Сводка по скважинам" Grid.Row="0" 
+                      Foreground="White"
+                      Grid.Column="0" Margin="5">
+                <Grid>
+                    <DataGrid ItemsSource="{Binding Wells}"
+                              SelectedItem="{Binding SelectedWell}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="WellId" Binding="{Binding WellId}"/>
+                            <DataGridTextColumn Header="X" Binding="{Binding X}" />
+                            <DataGridTextColumn Header="Y" Binding="{Binding Y}" />
+                            <DataGridTextColumn Header="Общая глубина" Binding="{Binding TotalDepth}" />
+                            <DataGridTextColumn Header="Интервалы" Binding="{Binding IntervalCount}" />
+                            <DataGridTextColumn Header="Средняя пористость" Binding="{Binding AveragePorosityPercent}" />
+                            <DataGridTextColumn Header="Доминирующая порода" Binding="{Binding DominantRock}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </GroupBox>
+
+            <!-- Интервалы выбранной скважины -->
+            <GroupBox Header="Интервалы выбранной скважины" Grid.Row="1" Grid.Column="0" Margin="5" 
+                      Foreground="White">
+                <Grid>
+                    <DataGrid ItemsSource="{Binding Intervals}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Depth From" Binding="{Binding DepthFrom}" />
+                            <DataGridTextColumn Header="Depth To" Binding="{Binding DepthTo}" />
+                            <DataGridTextColumn Header="Rock" Binding="{Binding Rock}" />
+                            <DataGridTextColumn Header="Porosity" Binding="{Binding Porosity}" />
+                            <DataGridTextColumn Header="Thickness" Binding="{Binding Thickness}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </GroupBox>
+
+            <!-- Ошибки -->
+            <GroupBox Header="Ошибки валидации" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" 
+                      Margin="5" Foreground="White">
+                <Grid>
+                    <DataGrid ItemsSource="{Binding Errors}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Строка" Binding="{Binding LineNumber}" />
+                            <DataGridTextColumn Header="WellId" Binding="{Binding WellId}" />
+                            <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <!-- Статусная строка -->
+        <Border Grid.Row="2" Background="#FF252525" Padding="8">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
+                <ProgressBar Width="150" Height="16" Margin="10,0,0,0"
+                      IsIndeterminate="True"
+                      Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </DockPanel>
+        </Border>
     </Grid>
 </Window>

@@ -23,6 +23,7 @@ namespace WellDataImport
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModels.MainViewModel();
         }
     }
 }
